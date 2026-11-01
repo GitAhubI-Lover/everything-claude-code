@@ -35,7 +35,7 @@ REPEAT  → Next test case
 
 ## Example Session
 
-```text
+````
 User: /go-test I need a function to validate email addresses
 
 Agent:
@@ -167,7 +167,7 @@ ok      project/validator    0.003s
 ✓ Coverage: 100%
 
 ## TDD Complete!
-```
+````
 
 ## Test Patterns
 
@@ -260,7 +260,7 @@ go test -race -cover ./...
 
 - `/go-build` - Fix build errors
 - `/go-review` - Review code after implementation
-- `/verify` - Run full verification loop
+- `verification-loop` skill - Run full verification loop
 
 ## Related
 

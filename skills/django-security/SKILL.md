@@ -1,6 +1,8 @@
 ---
 name: django-security
-description: Django security best practices, authentication, authorization, CSRF protection, SQL injection prevention, XSS prevention, and secure deployment configurations.
+description: Django security best practices, authentication, authorization, CSRF protection, SQL injection prevention, XSS prevention, and secure deployment configurations. Use when reviewing Django authentication, authorization, input handling, or deployment settings.
+metadata:
+  origin: ECC
 ---
 
 # Django Security Best Practices
@@ -35,12 +37,10 @@ SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 
 # HTTPS and Cookies
 SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Lax'
 
@@ -310,7 +310,6 @@ def greet_user(username):
 ```python
 # settings.py
 SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME sniffing
-SECURE_BROWSER_XSS_FILTER = True  # Enable XSS filter
 X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking
 
 # Custom middleware
@@ -336,7 +335,7 @@ class SecurityHeaderMiddleware:
 ```python
 # settings.py - CSRF is enabled by default
 CSRF_COOKIE_SECURE = True  # Only send over HTTPS
-CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript access
+CSRF_COOKIE_HTTPONLY = False  # False so AJAX can read csrf token from document.cookie; SESSION_COOKIE_HTTPONLY remains True
 CSRF_COOKIE_SAMESITE = 'Lax'  # Prevent CSRF in some cases
 CSRF_TRUSTED_ORIGINS = ['https://example.com']  # Trusted domains
 
@@ -390,27 +389,77 @@ def webhook_view(request):
 
 ```python
 import os
+import magic  # pip install python-magic
 from django.core.exceptions import ValidationError
 
-def validate_file_extension(value):
-    """Validate file extension."""
-    ext = os.path.splitext(value.name)[1]
-    valid_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.pdf']
-    if not ext.lower() in valid_extensions:
-        raise ValidationError('Unsupported file extension.')
+ALLOWED_MIMES = {
+    'image/jpeg', 'image/png', 'image/gif', 'application/pdf',
+}
+
+MIME_TO_EXTENSIONS = {
+    'image/jpeg': {'.jpg', '.jpeg'},
+    'image/png': {'.png'},
+    'image/gif': {'.gif'},
+    'application/pdf': {'.pdf'},
+}
+
+def validate_file_type(value):
+    """Validate file type using magic bytes and cross-check extension."""
+    mime = magic.from_buffer(value.read(2048), mime=True)
+    value.seek(0)
+
+    if mime not in ALLOWED_MIMES:
+        raise ValidationError('Unsupported file type.')
+
+    ext = os.path.splitext(value.name)[1].lower()
+    if ext not in MIME_TO_EXTENSIONS.get(mime, set()):
+        raise ValidationError('File extension does not match file content.')
 
 def validate_file_size(value):
     """Validate file size (max 5MB)."""
-    filesize = value.size
-    if filesize > 5 * 1024 * 1024:
+    if value.size > 5 * 1024 * 1024:
         raise ValidationError('File too large. Max size is 5MB.')
 
 # models.py
 class Document(models.Model):
     file = models.FileField(
         upload_to='documents/',
-        validators=[validate_file_extension, validate_file_size]
+        validators=[validate_file_type, validate_file_size]
     )
+
+```
+
+For environments where installing libmagic is difficult (e.g., minimal containers),
+use the pure-Python `filetype` package as an alternative:
+
+```python
+import os
+from django.core.exceptions import ValidationError
+
+import filetype  # pip install filetype
+
+ALLOWED_MIMES = {
+    'image/jpeg', 'image/png', 'image/gif', 'application/pdf',
+}
+
+MIME_TO_EXTENSIONS = {
+    'image/jpeg': {'.jpg', '.jpeg'},
+    'image/png': {'.png'},
+    'image/gif': {'.gif'},
+    'application/pdf': {'.pdf'},
+}
+
+def validate_file_type(value):
+    """Validate file type using magic bytes."""
+    kind = filetype.guess(value.read(2048))
+    value.seek(0)
+
+    if kind is None or kind.mime not in ALLOWED_MIMES:
+        raise ValidationError('Unsupported file type.')
+
+    ext = os.path.splitext(value.name)[1].lower()
+    if ext not in MIME_TO_EXTENSIONS.get(kind.mime, set()):
+        raise ValidationError('File extension does not match file content.')
 ```
 
 ### Secure File Storage

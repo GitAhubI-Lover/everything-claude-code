@@ -1,7 +1,7 @@
-# Everything Claude Code
+# ECC
 
-[![Stars](https://img.shields.io/github/stars/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/stargazers)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/affaan-m/ECC?style=flat)](https://github.com/affaan-m/ECC/stargazers)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 ![Shell](https://img.shields.io/badge/-Shell-4EAA25?logo=gnu-bash&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white)
 ![Go](https://img.shields.io/badge/-Go-00ADD8?logo=go&logoColor=white)
@@ -11,9 +11,9 @@
 
 <div align="center">
 
-**🌐 Language / 语言 / 語言**
+**Language / 语言 / 語言 / Dil / Язык / Ngôn ngữ**
 
-[**English**](../../README.md) | [简体中文](../../README.zh-CN.md) | [繁體中文](README.md)
+[**English**](../../README.md) | [Português (Brasil)](../pt-BR/README.md) | [简体中文](../../README.zh-CN.md) | **繁體中文** | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Türkçe](../tr/README.md) | [Русский](../ru/README.md) | [Tiếng Việt](../vi-VN/README.md) | [ไทย](../th/README.md) | [Deutsch](../de-DE/README.md) | [Українська](../uk-UA/README.md) | [Polski](../pl/README.md) | [বাংলা](../bn/README.md) | [العربية](../ar/README.md)
 
 </div>
 
@@ -33,12 +33,12 @@
 <tr>
 <td width="50%">
 <a href="https://x.com/affaanmustafa/status/2012378465664745795">
-<img src="https://github.com/user-attachments/assets/1a471488-59cc-425b-8345-5245c7efbcef" alt="Everything Claude Code 簡明指南" />
+<img src="https://github.com/user-attachments/assets/1a471488-59cc-425b-8345-5245c7efbcef" alt="ECC 簡明指南" />
 </a>
 </td>
 <td width="50%">
 <a href="https://x.com/affaanmustafa/status/2014040193557471352">
-<img src="https://github.com/user-attachments/assets/c9ca43bc-b149-427f-b551-af6840c368f0" alt="Everything Claude Code 完整指南" />
+<img src="https://github.com/user-attachments/assets/c9ca43bc-b149-427f-b551-af6840c368f0" alt="ECC 完整指南" />
 </a>
 </td>
 </tr>
@@ -59,7 +59,7 @@
 
 ---
 
-## 🚀 快速開始
+## 快速開始
 
 在 2 分鐘內快速上手：
 
@@ -67,39 +67,42 @@
 
 ```bash
 # 新增市集
-/plugin marketplace add affaan-m/everything-claude-code
+/plugin marketplace add https://github.com/affaan-m/ECC
 
 # 安裝外掛程式
-/plugin install everything-claude-code@everything-claude-code
+/plugin install ecc@ecc
 ```
 
 ### 第二步：安裝規則（必需）
 
-> ⚠️ **重要提示：** Claude Code 外掛程式無法自動分發 `rules`，需要手動安裝：
+> WARNING: **重要提示：** Claude Code 外掛程式無法自動分發 `rules`，需要手動安裝：
 
 ```bash
 # 首先複製儲存庫
-git clone https://github.com/affaan-m/everything-claude-code.git
+git clone https://github.com/affaan-m/ECC.git
 
 # 複製規則（應用於所有專案）
-cp -r everything-claude-code/rules/* ~/.claude/rules/
+cp -r ECC/rules/* ~/.claude/rules/
 ```
 
 ### 第三步：開始使用
 
 ```bash
-# 嘗試一個指令
-/plan "新增使用者認證"
+# 嘗試一個指令（外掛安裝使用命名空間形式）
+/ecc:plan "新增使用者認證"
+
+# 手動安裝（選項2）使用簡短形式：
+# /plan "新增使用者認證"
 
 # 查看可用指令
-/plugin list everything-claude-code@everything-claude-code
+/plugin list ecc@ecc
 ```
 
-✨ **完成！** 您現在使用 15+ 代理程式、30+ 技能和 20+ 指令。
+**完成！** 您現在使用 15+ 代理程式、30+ 技能和 20+ 指令。
 
 ---
 
-## 🌐 跨平台支援
+## 跨平台支援
 
 此外掛程式現已完整支援 **Windows、macOS 和 Linux**。所有鉤子和腳本已使用 Node.js 重寫以獲得最佳相容性。
 
@@ -134,12 +137,12 @@ node scripts/setup-package-manager.js --detect
 
 ---
 
-## 📦 內容概覽
+## 內容概覽
 
 本儲存庫是一個 **Claude Code 外掛程式** - 可直接安裝或手動複製元件。
 
 ```
-everything-claude-code/
+ECC/
 |-- .claude-plugin/   # 外掛程式和市集清單
 |   |-- plugin.json         # 外掛程式中繼資料和元件路徑
 |   |-- marketplace.json    # 用於 /plugin marketplace add 的市集目錄
@@ -234,7 +237,7 @@ everything-claude-code/
 
 ---
 
-## 🛠️ 生態系統工具
+## 生態系統工具
 
 ### ecc.tools - 技能建立器
 
@@ -256,7 +259,7 @@ everything-claude-code/
 
 ---
 
-## 📥 安裝
+## 安裝
 
 ### 選項 1：以外掛程式安裝（建議）
 
@@ -264,10 +267,10 @@ everything-claude-code/
 
 ```bash
 # 將此儲存庫新增為市集
-/plugin marketplace add affaan-m/everything-claude-code
+/plugin marketplace add https://github.com/affaan-m/ECC
 
 # 安裝外掛程式
-/plugin install everything-claude-code@everything-claude-code
+/plugin install ecc@ecc
 ```
 
 或直接新增到您的 `~/.claude/settings.json`：
@@ -275,15 +278,15 @@ everything-claude-code/
 ```json
 {
   "extraKnownMarketplaces": {
-    "everything-claude-code": {
+    "ecc": {
       "source": {
         "source": "github",
-        "repo": "affaan-m/everything-claude-code"
+        "repo": "affaan-m/ECC"
       }
     }
   },
   "enabledPlugins": {
-    "everything-claude-code@everything-claude-code": true
+    "ecc@ecc": true
   }
 }
 ```
@@ -292,30 +295,32 @@ everything-claude-code/
 
 ---
 
-### 🔧 選項 2：手動安裝
+### 選項 2：手動安裝
 
 如果您偏好手動控制安裝內容：
 
 ```bash
 # 複製儲存庫
-git clone https://github.com/affaan-m/everything-claude-code.git
+git clone https://github.com/affaan-m/ECC.git
 
 # 將代理程式複製到您的 Claude 設定
-cp everything-claude-code/agents/*.md ~/.claude/agents/
+cp ECC/agents/*.md ~/.claude/agents/
 
 # 複製規則
-cp everything-claude-code/rules/*.md ~/.claude/rules/
+cp ECC/rules/*.md ~/.claude/rules/
 
 # 複製指令
-cp everything-claude-code/commands/*.md ~/.claude/commands/
+cp ECC/commands/*.md ~/.claude/commands/
 
 # 複製技能
-cp -r everything-claude-code/skills/* ~/.claude/skills/
+cp -r ECC/skills/* ~/.claude/skills/
 ```
 
 #### 將鉤子新增到 settings.json
 
-將 `hooks/hooks.json` 中的鉤子複製到您的 `~/.claude/settings.json`。
+僅在手動安裝時，才將 `hooks/hooks.json` 中的鉤子複製到您的 `~/.claude/settings.json`。
+
+如果您是透過 `/plugin install` 安裝 ECC，請不要再把這些鉤子複製到 `settings.json`。Claude Code v2.1+ 會自動載入外掛中的 `hooks/hooks.json`，重複註冊會導致重複執行以及 `${CLAUDE_PLUGIN_ROOT}` 無法解析。
 
 #### 設定 MCP
 
@@ -325,7 +330,7 @@ cp -r everything-claude-code/skills/* ~/.claude/skills/
 
 ---
 
-## 🎯 核心概念
+## 核心概念
 
 ### 代理程式（Agents）
 
@@ -383,7 +388,7 @@ You are a senior code reviewer...
 
 ---
 
-## 🧪 執行測試
+## 執行測試
 
 外掛程式包含完整的測試套件：
 
@@ -399,7 +404,7 @@ node tests/hooks/hooks.test.js
 
 ---
 
-## 🤝 貢獻
+## 貢獻
 
 **歡迎並鼓勵貢獻。**
 
@@ -421,7 +426,7 @@ node tests/hooks/hooks.test.js
 
 ---
 
-## 📖 背景
+## 背景
 
 我從實驗性推出就開始使用 Claude Code。2025 年 9 月與 [@DRodriguezFX](https://x.com/DRodriguezFX) 一起使用 Claude Code 打造 [zenith.chat](https://zenith.chat)，贏得了 Anthropic x Forum Ventures 黑客松。
 
@@ -429,7 +434,7 @@ node tests/hooks/hooks.test.js
 
 ---
 
-## ⚠️ 重要注意事項
+## WARNING: 重要注意事項
 
 ### 上下文視窗管理
 
@@ -452,22 +457,23 @@ node tests/hooks/hooks.test.js
 
 ---
 
-## 🌟 Star 歷史
+## Star 歷史
 
-[![Star History Chart](https://api.star-history.com/svg?repos=affaan-m/everything-claude-code&type=Date)](https://star-history.com/#affaan-m/everything-claude-code&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=affaan-m/ECC&type=Date)](https://star-history.com/#affaan-m/ECC&Date)
 
 ---
 
-## 🔗 連結
+## 連結
 
-- **簡明指南（從這裡開始）：** [Everything Claude Code 簡明指南](https://x.com/affaanmustafa/status/2012378465664745795)
-- **完整指南（進階）：** [Everything Claude Code 完整指南](https://x.com/affaanmustafa/status/2014040193557471352)
+- **簡明指南（從這裡開始）：** [ECC 簡明指南](https://x.com/affaanmustafa/status/2012378465664745795)
+- **完整指南（進階）：** [ECC 完整指南](https://x.com/affaanmustafa/status/2014040193557471352)
 - **追蹤：** [@affaanmustafa](https://x.com/affaanmustafa)
 - **zenith.chat：** [zenith.chat](https://zenith.chat)
+- **技能目錄：** awesome-agent-skills（社區維護的智能體技能目錄）
 
 ---
 
-## 📄 授權
+## 授權
 
 MIT - 自由使用、依需求修改、如可能請回饋貢獻。
 

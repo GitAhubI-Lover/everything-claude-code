@@ -1,22 +1,24 @@
 {
-  "name": "everything-claude-code",
+  "name": "ecc",
   "owner": {
     "name": "Affaan Mustafa",
-    "email": "affaan@example.com"
+    "email": "me@affaanmustafa.com"
   },
   "metadata": {
-    "description": "Battle-tested Claude Code configurations from an Anthropic hackathon winner"
+    "description": "Harness-native ECC skills, hooks, rules, MCP conventions, and operator workflows"
   },
   "plugins": [
     {
-      "name": "everything-claude-code",
+      "name": "ecc",
       "source": "./",
-      "description": "Complete collection of agents, skills, hooks, commands, and rules evolved over 10+ months of intensive daily use",
+      "description": "Harness-native ECC operator layer - 71 agents, 314 skills, 98 legacy command shims, reusable hooks, rules, selective install profiles, and production-ready workflows for Claude Code, Codex, OpenCode, Cursor, and related agent harnesses",
+      "version": "2.2.3",
       "author": {
-        "name": "Affaan Mustafa"
+        "name": "Affaan Mustafa",
+        "email": "me@affaanmustafa.com"
       },
-      "homepage": "https://github.com/affaan-m/everything-claude-code",
-      "repository": "https://github.com/affaan-m/everything-claude-code",
+      "homepage": "https://ecc.tools",
+      "repository": "https://github.com/affaan-m/ECC",
       "license": "MIT",
       "keywords": [
         "agents",
@@ -38,7 +40,8 @@
         "code-review",
         "security",
         "best-practices"
-      ]
+      ],
+      "strict": false
     }
   ]
 }

@@ -92,7 +92,13 @@ source: "session-observation"
 
 ### 1. 啟用觀察 Hooks
 
-新增到你的 `~/.claude/settings.json`：
+**如果作為外掛安裝**（建議）：
+
+不需要在 `~/.claude/settings.json` 中額外加入 hook。Claude Code v2.1+ 會自動載入外掛的 `hooks/hooks.json`，其中已經註冊了 `observe.sh`。
+
+如果你之前把 `observe.sh` 複製到 `~/.claude/settings.json`，請移除重複的 `PreToolUse` / `PostToolUse` 區塊。重複註冊會造成重複執行，並觸發 `${CLAUDE_PLUGIN_ROOT}` 解析錯誤；這個變數只會在外掛自己的 `hooks/hooks.json` 中展開。
+
+**如果手動安裝到 `~/.claude/skills`**，新增到你的 `~/.claude/settings.json`：
 
 ```json
 {
@@ -101,14 +107,14 @@ source: "session-observation"
       "matcher": "*",
       "hooks": [{
         "type": "command",
-        "command": "~/.claude/skills/continuous-learning-v2/hooks/observe.sh pre"
+        "command": "~/.claude/skills/continuous-learning-v2/hooks/observe.sh"
       }]
     }],
     "PostToolUse": [{
       "matcher": "*",
       "hooks": [{
         "type": "command",
-        "command": "~/.claude/skills/continuous-learning-v2/hooks/observe.sh post"
+        "command": "~/.claude/skills/continuous-learning-v2/hooks/observe.sh"
       }]
     }]
   }
@@ -249,7 +255,7 @@ v2 完全相容 v1：
 ## 相關
 
 - [Skill Creator](https://skill-creator.app) - 從倉庫歷史產生本能
-- [Homunculus](https://github.com/humanplane/homunculus) - v2 架構靈感
+- Homunculus - 啟發 v2 架構的社區專案（原子觀察、信心評分、本能演化管線）
 - [Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) - 持續學習章節
 
 ---

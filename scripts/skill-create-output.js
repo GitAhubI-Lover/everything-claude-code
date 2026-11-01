@@ -38,10 +38,10 @@ const SPINNER = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', 
 // Helper functions
 function box(title, content, width = 60) {
   const lines = content.split('\n');
-  const top = `${BOX.topLeft}${BOX.horizontal} ${chalk.bold(chalk.cyan(title))} ${BOX.horizontal.repeat(width - title.length - 5)}${BOX.topRight}`;
-  const bottom = `${BOX.bottomLeft}${BOX.horizontal.repeat(width - 1)}${BOX.bottomRight}`;
+  const top = `${BOX.topLeft}${BOX.horizontal} ${chalk.bold(chalk.cyan(title))} ${BOX.horizontal.repeat(Math.max(0, width - title.length - 5))}${BOX.topRight}`;
+  const bottom = `${BOX.bottomLeft}${BOX.horizontal.repeat(width - 2)}${BOX.bottomRight}`;
   const middle = lines.map(line => {
-    const padding = width - 3 - stripAnsi(line).length;
+    const padding = width - 4 - stripAnsi(line).length;
     return `${BOX.vertical} ${line}${' '.repeat(Math.max(0, padding))} ${BOX.vertical}`;
   }).join('\n');
   return `${top}\n${middle}\n${bottom}`;
@@ -53,7 +53,7 @@ function stripAnsi(str) {
 }
 
 function progressBar(percent, width = 30) {
-  const filled = Math.round(width * percent / 100);
+  const filled = Math.min(width, Math.max(0, Math.round(width * percent / 100)));
   const empty = width - filled;
   const bar = chalk.green('█'.repeat(filled)) + chalk.gray('░'.repeat(empty));
   return `${bar} ${chalk.bold(percent)}%`;
@@ -64,7 +64,7 @@ function sleep(ms) {
 }
 
 async function animateProgress(label, steps, callback) {
-  process.stdout.write(`\n${chalk.cyan('⏳')} ${label}...\n`);
+  process.stdout.write(`\n${chalk.cyan('[RUN]')} ${label}...\n`);
 
   for (let i = 0; i < steps.length; i++) {
     const step = steps[i];
@@ -72,7 +72,7 @@ async function animateProgress(label, steps, callback) {
     await sleep(step.duration || 500);
     process.stdout.clearLine?.(0) || process.stdout.write('\r');
     process.stdout.cursorTo?.(0) || process.stdout.write('\r');
-    process.stdout.write(`   ${chalk.green('✓')} ${step.name}\n`);
+    process.stdout.write(`   ${chalk.green('[DONE]')} ${step.name}\n`);
     if (callback) callback(step, i);
   }
 }
@@ -90,8 +90,8 @@ class SkillCreateOutput {
 
     console.log('\n');
     console.log(chalk.bold(chalk.magenta('╔════════════════════════════════════════════════════════════════╗')));
-    console.log(chalk.bold(chalk.magenta('║')) + chalk.bold('  🔮 ECC Skill Creator                                          ') + chalk.bold(chalk.magenta('║')));
-    console.log(chalk.bold(chalk.magenta('║')) + `     ${subtitle}${' '.repeat(Math.max(0, 55 - stripAnsi(subtitle).length))}` + chalk.bold(chalk.magenta('║')));
+    console.log(chalk.bold(chalk.magenta('║')) + chalk.bold('  ECC Skill Creator                                             ') + chalk.bold(chalk.magenta('║')));
+    console.log(chalk.bold(chalk.magenta('║')) + `     ${subtitle}${' '.repeat(Math.max(0, 59 - stripAnsi(subtitle).length))}` + chalk.bold(chalk.magenta('║')));
     console.log(chalk.bold(chalk.magenta('╚════════════════════════════════════════════════════════════════╝')));
     console.log('');
   }
@@ -111,7 +111,7 @@ class SkillCreateOutput {
 
   analysisResults(data) {
     console.log('\n');
-    console.log(box('📊 Analysis Results', `
+    console.log(box('Analysis Results', `
 ${chalk.bold('Commits Analyzed:')} ${chalk.yellow(data.commits)}
 ${chalk.bold('Time Range:')}       ${chalk.gray(data.timeRange)}
 ${chalk.bold('Contributors:')}     ${chalk.cyan(data.contributors)}
@@ -121,11 +121,11 @@ ${chalk.bold('Files Tracked:')}    ${chalk.green(data.files)}
 
   patterns(patterns) {
     console.log('\n');
-    console.log(chalk.bold(chalk.cyan('🔍 Key Patterns Discovered:')));
+    console.log(chalk.bold(chalk.cyan('Key Patterns Discovered:')));
     console.log(chalk.gray('─'.repeat(50)));
 
     patterns.forEach((pattern, i) => {
-      const confidence = pattern.confidence || 0.8;
+      const confidence = pattern.confidence ?? 0.8;
       const confidenceBar = progressBar(Math.round(confidence * 100), 15);
       console.log(`
   ${chalk.bold(chalk.yellow(`${i + 1}.`))} ${chalk.bold(pattern.name)}
@@ -137,26 +137,26 @@ ${chalk.bold('Files Tracked:')}    ${chalk.green(data.files)}
 
   instincts(instincts) {
     console.log('\n');
-    console.log(box('🧠 Instincts Generated', instincts.map((inst, i) =>
+    console.log(box('Instincts Generated', instincts.map((inst, i) =>
       `${chalk.yellow(`${i + 1}.`)} ${chalk.bold(inst.name)} ${chalk.gray(`(${Math.round(inst.confidence * 100)}%)`)}`
     ).join('\n')));
   }
 
   output(skillPath, instinctsPath) {
     console.log('\n');
-    console.log(chalk.bold(chalk.green('✨ Generation Complete!')));
+    console.log(chalk.bold(chalk.green('Generation Complete!')));
     console.log(chalk.gray('─'.repeat(50)));
     console.log(`
-  ${chalk.green('📄')} ${chalk.bold('Skill File:')}
+  ${chalk.green('-')} ${chalk.bold('Skill File:')}
      ${chalk.cyan(skillPath)}
 
-  ${chalk.green('🧠')} ${chalk.bold('Instincts File:')}
+  ${chalk.green('-')} ${chalk.bold('Instincts File:')}
      ${chalk.cyan(instinctsPath)}
 `);
   }
 
   nextSteps() {
-    console.log(box('📋 Next Steps', `
+    console.log(box('Next Steps', `
 ${chalk.yellow('1.')} Review the generated SKILL.md
 ${chalk.yellow('2.')} Import instincts: ${chalk.cyan('/instinct-import <path>')}
 ${chalk.yellow('3.')} View learned patterns: ${chalk.cyan('/instinct-status')}
@@ -167,7 +167,7 @@ ${chalk.yellow('4.')} Evolve into skills: ${chalk.cyan('/evolve')}
 
   footer() {
     console.log(chalk.gray('─'.repeat(60)));
-    console.log(chalk.dim(`  Powered by Everything Claude Code • ecc.tools`));
+    console.log(chalk.dim(`  Powered by ECC • ecc.tools`));
     console.log(chalk.dim(`  GitHub App: github.com/apps/skill-creator`));
     console.log('\n');
   }

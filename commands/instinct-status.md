@@ -1,86 +1,59 @@
 ---
 name: instinct-status
-description: Show all learned instincts with their confidence levels
+description: Show learned instincts (project + global) with confidence
 command: true
 ---
 
 # Instinct Status Command
 
-Shows all learned instincts with their confidence scores, grouped by domain.
+Shows learned instincts for the current project plus global instincts, grouped by domain.
 
 ## Implementation
 
-Run the instinct CLI using the plugin root path:
+Run the instinct CLI, resolving the active ECC plugin root the same way
+`hooks/hooks.json` and the other slash commands (`/sessions`, `/skill-health`)
+do — env var → standard install → known plugin roots → plugin cache → fallback.
+This avoids the divergence that happens when `CLAUDE_PLUGIN_ROOT` is unset
+while a legacy `~/.claude/skills/continuous-learning-v2/` directory still
+exists (#2037).
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/skills/continuous-learning-v2/scripts/instinct-cli.py" status
-```
-
-Or if `CLAUDE_PLUGIN_ROOT` is not set (manual installation), use:
-
-```bash
-python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py status
+ECC_ROOT="$(node -e "var r=(function(){var p=require('path'),f=require('fs'),o=require('os');var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var d=(process.env.CLAUDE_CONFIG_DIR||'').trim()||p.join(o.homedir(),'.claude');if(d==='~')d=o.homedir();else if(d.charAt(0)==='~'&&(d.charAt(1)==='/'||d.charCodeAt(1)===92))d=p.join(o.homedir(),d.slice(2));try{if(o.platform()==='linux'){var v=f.readFileSync('/proc/version','utf8').toLowerCase();if(v.includes('microsoft')){var b=String.fromCharCode(92),m=d.match(/^([A-Za-z]):/);if(m&&(d.charAt(2)==='/'||d.charAt(2)===b)){var dl=m[1].toLowerCase();d='/mnt/'+dl+d.slice(2).split(b).join('/')}}}}catch(_){}d=p.resolve(d);function L(x){try{return require(p.join(x,'scripts','lib','resolve-ecc-root')).resolveEccRoot()}catch(_){return null}}var r=L(d);if(r)return r;var s=['ecc','ecc@ecc','marketplaces/ecc','everything-claude-code','everything-claude-code@everything-claude-code','marketplaces/everything-claude-code'];for(var i=0;i<s.length;i++){r=L(p.join(d,'plugins',s[i]));if(r)return r}function D(x){try{return f.readdirSync(x,{withFileTypes:true}).filter(function(z){return z.isDirectory()}).map(function(z){return z.name})}catch(e){if(e.code==='ENOENT')return [];throw e}}var g=['ecc','everything-claude-code'];for(var j=0;j<g.length;j++){var c=p.join(d,'plugins','cache',g[j]);var O=D(c);for(var k=0;k<O.length;k++){var q=p.join(c,O[k]);var V=D(q);for(var m=0;m<V.length;m++){r=L(p.join(q,V[m]));if(r)return r}}}return d})();console.log(r)")" &&
+python3 "$ECC_ROOT/skills/continuous-learning-v2/scripts/instinct-cli.py" status
 ```
 
 ## Usage
 
 ```
 /instinct-status
-/instinct-status --domain code-style
-/instinct-status --low-confidence
 ```
 
 ## What to Do
 
-1. Read all instinct files from `~/.claude/homunculus/instincts/personal/`
-2. Read inherited instincts from `~/.claude/homunculus/instincts/inherited/`
-3. Display them grouped by domain with confidence bars
+1. Detect current project context (git remote/path hash)
+2. Read project instincts from `~/.claude/homunculus/projects/<project-id>/instincts/`
+3. Read global instincts from `~/.claude/homunculus/instincts/`
+4. Merge with precedence rules (project overrides global when IDs collide)
+5. Display grouped by domain with confidence bars and observation stats
 
 ## Output Format
 
 ```
-📊 Instinct Status
-==================
+============================================================
+  INSTINCT STATUS - 12 total
+============================================================
 
-## Code Style (4 instincts)
+  Project: my-app (a1b2c3d4e5f6)
+  Project instincts: 8
+  Global instincts:  4
 
-### prefer-functional-style
-Trigger: when writing new functions
-Action: Use functional patterns over classes
-Confidence: ████████░░ 80%
-Source: session-observation | Last updated: 2025-01-22
+## PROJECT-SCOPED (my-app)
+  ### WORKFLOW (3)
+    ███████░░░  70%  grep-before-edit [project]
+              trigger: when modifying code
 
-### use-path-aliases
-Trigger: when importing modules
-Action: Use @/ path aliases instead of relative imports
-Confidence: ██████░░░░ 60%
-Source: repo-analysis (github.com/acme/webapp)
-
-## Testing (2 instincts)
-
-### test-first-workflow
-Trigger: when adding new functionality
-Action: Write test first, then implementation
-Confidence: █████████░ 90%
-Source: session-observation
-
-## Workflow (3 instincts)
-
-### grep-before-edit
-Trigger: when modifying code
-Action: Search with Grep, confirm with Read, then Edit
-Confidence: ███████░░░ 70%
-Source: session-observation
-
----
-Total: 9 instincts (4 personal, 5 inherited)
-Observer: Running (last analysis: 5 min ago)
+## GLOBAL (apply to all projects)
+  ### SECURITY (2)
+    █████████░  85%  validate-user-input [global]
+              trigger: when handling user input
 ```
-
-## Flags
-
-- `--domain <name>`: Filter by domain (code-style, testing, git, etc.)
-- `--low-confidence`: Show only instincts with confidence < 0.5
-- `--high-confidence`: Show only instincts with confidence >= 0.7
-- `--source <type>`: Filter by source (session-observation, repo-analysis, inherited)
-- `--json`: Output as JSON for programmatic use

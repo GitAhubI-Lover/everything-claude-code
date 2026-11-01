@@ -2,6 +2,9 @@ const js = require('@eslint/js');
 const globals = require('globals');
 
 module.exports = [
+    {
+        ignores: ['.opencode/dist/**', '.cursor/**', 'node_modules/**', '.venv/**', 'venv/**', 'coverage/**', 'workflows/**/*.workflow.*', '.claude/workflows/**']
+    },
     js.configs.recommended,
     {
         languageOptions: {
@@ -19,7 +22,25 @@ module.exports = [
                 caughtErrorsIgnorePattern: '^_'
             }],
             'no-undef': 'error',
-            'eqeqeq': 'warn'
+            'eqeqeq': 'warn',
+            'prefer-const': 'warn',
+            'no-var': 'warn',
+            'no-console': 'off',
+            'complexity': ['warn', 20],
+            'max-depth': ['warn', 5],
+            'max-params': ['warn', 6]
+        }
+    },
+    {
+        files: ['**/*.mjs'],
+        languageOptions: {
+            sourceType: 'module'
+        }
+    },
+    {
+        files: ['docker/context-profiles/complex-eval/**/recurring-incident/**/*.js'],
+        languageOptions: {
+            sourceType: 'module'
         }
     }
 ];
